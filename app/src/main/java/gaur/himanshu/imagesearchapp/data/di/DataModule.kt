@@ -1,10 +1,16 @@
 package gaur.himanshu.imagesearchapp.data.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import gaur.himanshu.imagesearchapp.AppDatabase
 import gaur.himanshu.imagesearchapp.data.mappers.DelivererDotToDelivererMapper
+import gaur.himanshu.imagesearchapp.data.mappers.DelivererEntityToDelivererMapper
+import gaur.himanshu.imagesearchapp.data.model.local.DelivererDao
+import gaur.himanshu.imagesearchapp.data.model.local.RemoteKeysDao
 import gaur.himanshu.imagesearchapp.data.model.remote.ApiService
 import gaur.himanshu.imagesearchapp.data.repository.DelivererRepositoryImpl
 import gaur.himanshu.imagesearchapp.domain.repository.DelivererRepository
@@ -34,12 +40,35 @@ object DataModule {
     fun provideImageRepository(
         apiService: ApiService,
         mapper: DelivererDotToDelivererMapper,
+        delivererDao: DelivererDao,
+        remoteKeyDao: RemoteKeysDao,
+        delivererEntityToDelivererMapper: DelivererEntityToDelivererMapper
 
     ): DelivererRepository {
         return DelivererRepositoryImpl(
             apiService, mapper,
-
+            delivererDao = delivererDao,
+            remoteKeyDao = remoteKeyDao,
+            delivererEntityToDelivererMapper = delivererEntityToDelivererMapper,
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getInstance(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideImageDao(appDatabase: AppDatabase): DelivererDao {
+        return appDatabase.getDelivererDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRemoteKeyDao(appDatabase: AppDatabase): RemoteKeysDao {
+        return appDatabase.getRemoteKeyDao()
     }
 
 

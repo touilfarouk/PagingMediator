@@ -107,7 +107,7 @@ fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel){
 
                 items(
                     count = deliverers.itemCount,
-                    key = deliverers.itemKey { it?.id ?: "unknown" },
+                    key = deliverers.itemKey { it.uuid },
 
                 ) { index ->
                     val item = deliverers.get(index)

@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gaur.himanshu.imagesearchapp.domain.model.Deliverer
+import gaur.himanshu.imagesearchapp.domain.useCase.GetDeliverersFromRemoteMediator
 import gaur.himanshu.imagesearchapp.domain.useCase.GetDeliverersUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val useCase: GetDeliverersUseCase
+    private val useCase: GetDeliverersUseCase,
+    private val remoteMediator: GetDeliverersFromRemoteMediator
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -25,7 +27,7 @@ class MainViewModel @Inject constructor(
         .filter { it.isNotBlank() }
         .debounce(1000)
         .flatMapLatest { query ->
-            useCase.invoke(query).flow
+            remoteMediator.invoke(query)
                 .onEach { pagingData ->
                     Log.d("MainViewModel", "New paging data received for query: $query")
                     // You can't directly inspect PagingData here, but this confirms data is flowing
