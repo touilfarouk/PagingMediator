@@ -71,6 +71,7 @@ dependencies {
 
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
+    implementation(libs.paging.runtime)
     implementation(libs.room.paging)
 
     implementation(libs.coil.compose)
