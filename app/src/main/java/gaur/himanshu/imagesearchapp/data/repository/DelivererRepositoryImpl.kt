@@ -5,11 +5,13 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.paging.map
 import gaur.himanshu.imagesearchapp.data.mappers.DelivererDotToDelivererMapper
 import gaur.himanshu.imagesearchapp.data.mappers.DelivererEntityToDelivererMapper
 import gaur.himanshu.imagesearchapp.data.model.local.DelivererDao
 import gaur.himanshu.imagesearchapp.data.model.local.RemoteKeysDao
+import gaur.himanshu.imagesearchapp.data.model.local.entities.DelivererEntity
 import gaur.himanshu.imagesearchapp.data.model.remote.ApiService
 import gaur.himanshu.imagesearchapp.data.pagingSource.DelivererPagingSource
 import gaur.himanshu.imagesearchapp.data.pagingSource.DelivererRemoteMediator
@@ -73,5 +75,7 @@ class DelivererRepositoryImpl @Inject constructor(
                 }
             }
     }
+
+    override fun getAllDeliverers(): PagingSource<Int, DelivererEntity> = delivererDao.getAllDeliverers()
 
 }

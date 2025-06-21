@@ -76,4 +76,26 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+
+    // Compose UI
+    implementation ("androidx.compose.ui:ui:1.6.1")
+    implementation ("androidx.compose.ui:ui-tooling-preview:1.6.1")
+    debugImplementation ("androidx.compose.ui:ui-tooling:1.6.1")
+
+
+
+// Compose Material Icons (for Delete icon)
+    implementation ("androidx.compose.material:material-icons-extended:1.6.1")
+
+
+
+// Coroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+// Lifecycle ViewModel (needed if you're using hiltViewModel)
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+
+
 }

@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,114 +38,95 @@ import coil3.compose.AsyncImage
 import dagger.hilt.android.AndroidEntryPoint
 import gaur.himanshu.imagesearchapp.presentation.ui.theme.ImageSearchAppTheme
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             var query by rememberSaveable { mutableStateOf("") }
             val viewModel = hiltViewModel<MainViewModel>()
+
             ImageSearchAppTheme {
                 Scaffold(
                     topBar = {
-                        TextField(value = query, onValueChange = {
-                            query = it
-                            viewModel.updateQuery(query)
-                        }, modifier = Modifier.fillMaxWidth())
+                        TextField(
+                            value = query,
+                            onValueChange = {
+                                query = it
+                                viewModel.updateQuery(it)
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     },
                     modifier = Modifier
                         .safeContentPadding()
-                        .fillMaxSize(),
+                        .fillMaxSize()
                 ) { innerPadding ->
-                    MainContent(modifier = Modifier.padding(innerPadding), viewModel)
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (query.isBlank()) {
+                        // ✅ Show local deliverers
+                        ListDeliverers(
+                            viewModel = viewModel,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    } else {
+                        // ✅ Show remote search deliverers
+                        SearchDeliverer(
+                            viewModel = viewModel,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun MainContent(modifier: Modifier = Modifier, viewModel: MainViewModel){
-    val lazyState = rememberLazyGridState()
-    val deliverers = viewModel.deliverers.collectAsLazyPagingItems()
-
-
-    if (deliverers.loadState.refresh is LoadState.NotLoading) {
-
-        if (deliverers.itemCount == 0) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Nothing found")
-            }
-        }
-
-    }
-
-    LazyVerticalGrid(
-        state = lazyState,
-        columns = GridCells.Fixed(2), modifier = modifier
-    ) {
-        if (deliverers.loadState.prepend is LoadState.Loading) {
-            item {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-        }
-        if (deliverers.loadState.prepend is LoadState.Error) {
-            item {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                        deliverers.retry()
-                    }) { Text("Retry") }
-                }
-            }
-        }
-
-
-        if (deliverers.loadState.refresh is LoadState.NotLoading) {
-            if (deliverers.itemCount != 0) {
-
-                items(
-                    count = deliverers.itemCount,
-                    key = deliverers.itemKey { it.uuid },
-
-                ) { index ->
-                    val item = deliverers.get(index)
-
-                    Log.d("DelivererItem", "Name: ${item?.name}")
-
-                    Text(
-                        text = item?.name ?: "Unknown",
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
 
 
 
 
 
-        if (deliverers.loadState.append is LoadState.Loading) {
-            item {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-        }
-        if (deliverers.loadState.append is LoadState.Error) {
-            item {
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                        deliverers.retry()
-                    }) { Text("Retry") }
-                }
-            }
-        }
 
-    }
-}
+
+
+
+
+
+
+//
+//@AndroidEntryPoint
+//class MainActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            var query by rememberSaveable { mutableStateOf("") }
+//            val viewModel = hiltViewModel<MainViewModel>()
+//            ImageSearchAppTheme {
+//                Scaffold(
+//                    topBar = {
+//                        TextField(value = query, onValueChange = {
+//                            query = it
+//                            viewModel.updateQuery(query)
+//                        }, modifier = Modifier.fillMaxWidth())
+//                    },
+//                    modifier = Modifier
+//                        .safeContentPadding()
+//                        .fillMaxSize(),
+//                ) { innerPadding ->
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    SearchDeliverer(modifier = Modifier.padding(innerPadding), viewModel)
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    ListDeliverers(viewModel = viewModel)
+//
+//                }
+//            }
+//        }
+//    }
+//}
+//

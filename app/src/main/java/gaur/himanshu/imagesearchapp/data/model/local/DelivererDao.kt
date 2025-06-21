@@ -18,6 +18,9 @@ interface DelivererDao {
     @Query("SELECT * FROM DelivererEntity WHERE `query`=:name")
     fun getDeliverers(name: String): PagingSource<Int, DelivererEntity>
 
+    @Query("SELECT * FROM DelivererEntity")
+    fun getAllDeliverers(): PagingSource<Int, DelivererEntity>
+
     @Query("SELECT COUNT(*) FROM DelivererEntity WHERE `query` =:name")
     suspend fun countBasedOnQuery(name: String): Int
 

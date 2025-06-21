@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import gaur.himanshu.imagesearchapp.domain.model.Deliverer
+import gaur.himanshu.imagesearchapp.domain.useCase.GetAllDeliverersUseCase
 import gaur.himanshu.imagesearchapp.domain.useCase.GetDeliverersFromRemoteMediator
 import gaur.himanshu.imagesearchapp.domain.useCase.GetDeliverersUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,11 +17,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val useCase: GetDeliverersUseCase,
-    private val remoteMediator: GetDeliverersFromRemoteMediator
+    // private val useCase: GetDeliverersUseCase,
+    private val remoteMediator: GetDeliverersFromRemoteMediator,
+    private val getAllDeliverersUseCase: GetAllDeliverersUseCase
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
+
+    val deliverersPaged: Flow<PagingData<Deliverer>> = getAllDeliverersUseCase()
+        .cachedIn(viewModelScope) // Use invoke() directly
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val deliverers: Flow<PagingData<Deliverer>> = _query
