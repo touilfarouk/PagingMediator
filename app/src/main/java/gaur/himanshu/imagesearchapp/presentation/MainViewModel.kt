@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import gaur.himanshu.imagesearchapp.domain.model.Deliverer
 import gaur.himanshu.imagesearchapp.domain.useCase.GetAllDeliverersUseCase
 import gaur.himanshu.imagesearchapp.domain.useCase.GetDeliverersFromRemoteMediator
+import gaur.himanshu.imagesearchapp.domain.useCase.GetDeliverersFromLocalSearch
 import gaur.himanshu.imagesearchapp.domain.useCase.GetDeliverersUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     // private val useCase: GetDeliverersUseCase,
     private val remoteMediator: GetDeliverersFromRemoteMediator,
-    private val getAllDeliverersUseCase: GetAllDeliverersUseCase
+    private val getAllDeliverersUseCase: GetAllDeliverersUseCase,
+    private val localSearchUseCase: GetDeliverersFromLocalSearch
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -27,6 +29,7 @@ class MainViewModel @Inject constructor(
     val deliverersPaged: Flow<PagingData<Deliverer>> = getAllDeliverersUseCase()
         .cachedIn(viewModelScope) // Use invoke() directly
 
+    // Remote search flow (searches remotely and updates local database)
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val deliverers: Flow<PagingData<Deliverer>> = _query
         .filter { it.isNotBlank() }
@@ -36,6 +39,19 @@ class MainViewModel @Inject constructor(
                 .onEach { pagingData ->
                     Log.d("MainViewModel", "New paging data received for query: $query")
                     // You can't directly inspect PagingData here, but this confirms data is flowing
+                }
+        }
+        .cachedIn(viewModelScope)
+
+    // Local search flow (searches only in local database)
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    val localDeliverers: Flow<PagingData<Deliverer>> = _query
+        .filter { it.isNotBlank() }
+        .debounce(1000)
+        .flatMapLatest { query ->
+            localSearchUseCase.invoke(query)
+                .onEach { pagingData ->
+                    Log.d("MainViewModel", "Local search data received for query: $query")
                 }
         }
         .cachedIn(viewModelScope)

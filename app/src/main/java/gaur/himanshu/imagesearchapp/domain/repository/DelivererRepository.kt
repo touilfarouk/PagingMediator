@@ -12,5 +12,6 @@ interface DelivererRepository {
     fun getDeliverers(name: String):Pager<Int,Deliverer>
     fun getRemoteMediatorDeliverers(q: String): Flow<PagingData<Deliverer>>
     fun getAllDeliverers(): PagingSource<Int, DelivererEntity>
+    fun searchLocalDeliverers(searchName: String): Flow<PagingData<Deliverer>>
 
 }

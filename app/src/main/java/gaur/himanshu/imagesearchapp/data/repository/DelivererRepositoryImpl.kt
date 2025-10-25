@@ -78,4 +78,23 @@ class DelivererRepositoryImpl @Inject constructor(
 
     override fun getAllDeliverers(): PagingSource<Int, DelivererEntity> = delivererDao.getAllDeliverers()
 
+    override fun searchLocalDeliverers(searchName: String): Flow<PagingData<Deliverer>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                prefetchDistance = 1,
+                enablePlaceholders = false,
+                initialLoadSize = 10
+            ),
+            pagingSourceFactory = {
+                delivererDao.searchDeliverersByName(searchName)
+            }
+        ).flow
+            .map { pagingData ->
+                pagingData.map { entity ->
+                    delivererEntityToDelivererMapper.map(entity)
+                }
+            }
+    }
+
 }

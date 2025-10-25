@@ -27,4 +27,6 @@ interface DelivererDao {
     @Query("SELECT COUNT(*) FROM DelivererEntity WHERE `query`=:name")
     suspend fun getCountCorrespondingToQuery(name: String): Int
 
+    @Query("SELECT * FROM DelivererEntity WHERE name LIKE '%' || :searchName || '%' ORDER BY name ASC")
+    fun searchDeliverersByName(searchName: String): PagingSource<Int, DelivererEntity>
 }
