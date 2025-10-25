@@ -12,6 +12,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+/**
+ * Use case for retrieving all deliverers from local database
+ * Returns all cached deliverer data with pagination support
+ * Used when no search query is active
+ */
 class GetAllDeliverersUseCase @Inject constructor(
     private val delivererRepository: DelivererRepository,
     private val delivererEntityToDelivererMapper: DelivererEntityToDelivererMapper

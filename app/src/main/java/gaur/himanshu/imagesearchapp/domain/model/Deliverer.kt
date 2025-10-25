@@ -1,9 +1,10 @@
 package gaur.himanshu.imagesearchapp.domain.model
 
-import java.util.UUID
-
+/**
+ * Domain model representing a deliverer
+ * This is the clean architecture representation used throughout the app
+ */
 data class Deliverer(
-    val id: String,
-    val name: String,
-    val uuid: String = UUID.randomUUID().toString()
+    val id: String,     // Unique identifier for the deliverer
+    val name: String    // Display name of the deliverer
 )

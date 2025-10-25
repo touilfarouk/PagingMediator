@@ -19,11 +19,19 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 
+/**
+ * Composable that displays remote search results for deliverers
+ * Searches API and caches results locally using RemoteMediator
+ * Handles loading, error states, and pagination automatically
+ */
 @Composable
 fun SearchDeliverer(modifier: Modifier = Modifier, viewModel: MainViewModel) {
+    // Collect paged search results from the viewModel
     val deliverers = viewModel.deliverers.collectAsLazyPagingItems()
 
+    // Handle different loading states
     when (val refreshState = deliverers.loadState.refresh) {
+        // Show loading indicator during search
         is LoadState.Loading -> {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -31,6 +39,7 @@ fun SearchDeliverer(modifier: Modifier = Modifier, viewModel: MainViewModel) {
             return
         }
 
+        // Show error state with retry option
         is LoadState.Error -> {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Button(onClick = { deliverers.retry() }) {
@@ -40,6 +49,7 @@ fun SearchDeliverer(modifier: Modifier = Modifier, viewModel: MainViewModel) {
             return
         }
 
+        // Show empty state when no search results found
         is LoadState.NotLoading -> {
             if (deliverers.itemCount == 0) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -50,7 +60,9 @@ fun SearchDeliverer(modifier: Modifier = Modifier, viewModel: MainViewModel) {
         }
     }
 
+    // Display search results in a lazy column
     LazyColumn(modifier = modifier.fillMaxSize()) {
+        // Render each search result item
         items(deliverers.itemCount) { index ->
             val item = deliverers[index]
             if (item != null) {
@@ -76,7 +88,7 @@ fun SearchDeliverer(modifier: Modifier = Modifier, viewModel: MainViewModel) {
             }
         }
 
-        // Append loading indicator
+        // Show loading indicator when loading more results
         if (deliverers.loadState.append is LoadState.Loading) {
             item {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -85,7 +97,7 @@ fun SearchDeliverer(modifier: Modifier = Modifier, viewModel: MainViewModel) {
             }
         }
 
-        // Append retry on error
+        // Show retry button on append error
         if (deliverers.loadState.append is LoadState.Error) {
             item {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
