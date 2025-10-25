@@ -11,7 +11,7 @@ import gaur.himanshu.imagesearchapp.data.model.local.entities.DelivererEntity
 
 @Database(
     entities = [DelivererEntity::class, RemoteKey::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
